@@ -8,7 +8,7 @@ events.on("slack", "slash_command", async event => {
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
-    fooJob.primaryContainer.arguments = [command.native];
+    fooJob.primaryContainer.arguments = [JSON.stringify(command.native)];
     await fooJob.run();
 
     let barJob = new Job("bar", "debian:latest", event);
