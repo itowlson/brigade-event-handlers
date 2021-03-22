@@ -1,8 +1,10 @@
-const { events, Job } = require("@brigadecore/brigadier");
+const { events, logger, Job } = require("@brigadecore/brigadier");
 
 events.on("slack", "slash_command", async event => {
 
     const command = JSON.parse(event.payload);
+    // logger.info(`payload=${event.payload}`);
+    // logger.info(`native=${command.native}`);
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
