@@ -1,11 +1,9 @@
 import { events, logger, Job } from "@brigadecore/brigadier";
-import { WebClient } from '@slack/web-api';
 
+import { slackEvents } from './brigslack';
 import * as utils from './utils';
 
-events.on("slack", "slash_command", async event => {
-
-    const command = JSON.parse(event.payload);
+slackEvents.onSlashCommand(async (command, event) => {
 
     await utils.notifySlack(command.responseToken, command.body.channel_id,
         `Brigade has received your command regarding ${command.body.text} and will ${command.body.command.substr(1)} it immediately`
