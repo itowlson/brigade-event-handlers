@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@brigadecore/brigade-sdk": "2.0.0-alpha.3",
     "@slack/web-api": "6.1.0"
   }
 }

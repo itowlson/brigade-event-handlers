@@ -1,16 +1,16 @@
 const { events, logger, Job } = require("@brigadecore/brigadier");
-// const { WebClient } = require('@slack/web-api');
+const { WebClient } = require('@slack/web-api');
 
 events.on("slack", "slash_command", async event => {
 
     const command = JSON.parse(event.payload);
 
     // TODO: package.json doesn't work at the moment
-    // const slack = new WebClient(command.responseToken);
-    // const conversationId = command.body.channel_id;
-    // logger.info('notifying Slack');
-    // await slack.chat.postMessage({ channel: conversationId, text: `Brigade has received your command regarding ${command.body.text} and will ${command.body.command.substr(1)} it immediately` });
-    // logger.info('notified Slack');
+    const slack = new WebClient(command.responseToken);
+    const conversationId = command.body.channel_id;
+    logger.info('notifying Slack');
+    await slack.chat.postMessage({ channel: conversationId, text: `Brigade has received your command regarding ${command.body.text} and will ${command.body.command.substr(1)} it immediately` });
+    logger.info('notified Slack');
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
