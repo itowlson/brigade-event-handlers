@@ -5,7 +5,6 @@ events.on("slack", "slash_command", async event => {
 
     const command = JSON.parse(event.payload);
 
-    // TODO: package.json doesn't work at the moment
     const slack = new WebClient(command.responseToken);
     const conversationId = command.body.channel_id;
     logger.info('notifying Slack');
