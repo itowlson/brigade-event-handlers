@@ -52,3 +52,5 @@ events.on("slack", "message_action", async event => {
     barJob.primaryContainer.arguments = [`${shortcut.body.message.text} (from ${shortcut.body.channel.name})`];
     await barJob.run();
 });
+
+events.process();
