@@ -1,5 +1,5 @@
-const { events, logger, Job } = require("@brigadecore/brigadier");
-const { WebClient } = require('@slack/web-api');
+import { events, logger, Job } from "@brigadecore/brigadier";
+import { WebClient } from '@slack/web-api';
 
 events.on("slack", "slash_command", async event => {
 
