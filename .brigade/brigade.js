@@ -3,16 +3,11 @@ const { events, logger, Job } = require('@brigadecore/brigadier');
 const { slackEvents } = require('./brigslack');
 const utils = require('./utils');
 
-slackEvents.onSlashCommand(async (command, event) => {
+slackEvents.onSlashCommand(async (command, responseToken, event) => {
 
-    await utils.notifySlack(command.responseToken, command.body.channel_id,
-        `Brigade has received your command regarding ${command.body.text} and will ${command.body.command.substr(1)} it immediately`
+    await utils.notifySlack(responseToken, command.channel_id,
+        `Brigade has received your command regarding ${command.text} and will ${command.command.substr(1)} it immediately`
         );
-    // const slack = new WebClient(command.responseToken);
-    // const conversationId = command.body.channel_id;
-    // logger.info('notifying Slack');
-    // await slack.chat.postMessage({ channel: conversationId, text: `Brigade has received your command regarding ${command.body.text} and will ${command.body.command.substr(1)} it immediately` });
-    // logger.info('notified Slack');
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
@@ -21,13 +16,11 @@ slackEvents.onSlashCommand(async (command, event) => {
 
     let barJob = new Job("bar", "debian:latest", event);
     barJob.primaryContainer.command = ["echo"];
-    barJob.primaryContainer.arguments = [`${command.body.command} ${command.body.text} (from ${command.body.channel_name})`];
+    barJob.primaryContainer.arguments = [`${command.command} ${command.text} (from ${command.channel_name})`];
     await barJob.run();
 });
 
-events.on("slack", "shortcut", async event => {
-
-    const shortcut = JSON.parse(event.payload || "");
+slackEvents.onShortcut(async (shortcut, responseToken, event) => {
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
@@ -40,9 +33,11 @@ events.on("slack", "shortcut", async event => {
     await barJob.run();
 });
 
-events.on("slack", "message_action", async event => {
+slackEvents.onMessageAction(async (shortcut, responseToken, event) => {
 
-    const shortcut = JSON.parse(event.payload || "");
+    await utils.notifySlack(responseToken, shortcut.channel.id,
+        `Brigade has received your command regarding ${shortcut.message.text} and is springing into action pronto`
+        );
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
@@ -51,7 +46,7 @@ events.on("slack", "message_action", async event => {
 
     let barJob = new Job("bar", "debian:latest", event);
     barJob.primaryContainer.command = ["echo"];
-    barJob.primaryContainer.arguments = [`${shortcut.body.message.text} (from ${shortcut.body.channel.name})`];
+    barJob.primaryContainer.arguments = [`${shortcut.message.text} (from ${shortcut.channel.name})`];
     await barJob.run();
 });
 
