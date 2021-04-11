@@ -27,7 +27,7 @@ slackEvents.onSlashCommand(async (command, event) => {
 
 events.on("slack", "shortcut", async event => {
 
-    const shortcut = JSON.parse(event.payload);
+    const shortcut = JSON.parse(event.payload || "");
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
@@ -42,7 +42,7 @@ events.on("slack", "shortcut", async event => {
 
 events.on("slack", "message_action", async event => {
 
-    const shortcut = JSON.parse(event.payload);
+    const shortcut = JSON.parse(event.payload || "");
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
