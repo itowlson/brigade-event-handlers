@@ -1,7 +1,7 @@
-import { events, logger, Job } from "@brigadecore/brigadier";
+const { events, logger, Job } = require('@brigadecore/brigadier');
 
-import { slackEvents } from './brigslack';
-import * as utils from './utils';
+const { slackEvents } = require('./brigslack');
+const utils = require('./utils');
 
 slackEvents.onSlashCommand(async (command, event) => {
 
