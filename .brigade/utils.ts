@@ -1,7 +1,7 @@
 const { logger } = require('@brigadecore/brigadier');
 const { WebClient } = require('@slack/web-api');
 
-async function notifySlack(responseToken /*: string */, channelId /*: string */, message /*: string */) {
+export async function notifySlack(responseToken /*: string */, channelId /*: string */, message /*: string */) {
     const slack = new WebClient(responseToken);
     const conversationId = channelId;
     logger.info('notifying Slack');
@@ -9,4 +9,4 @@ async function notifySlack(responseToken /*: string */, channelId /*: string */,
     logger.info('notified Slack');
 }
 
-module.exports = { notifySlack };
+// module.exports = { notifySlack };

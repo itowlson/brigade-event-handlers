@@ -1,7 +1,7 @@
 const { Event, events } = require('@brigadecore/brigadier');
 const slack = require('@slack/bolt');
 
-class SlackEvents {
+export class SlackEvents {
     onSlashCommand(action /*: (command: slack.SlashCommand, responseToken: string, event: Event) => Promise<void> */) {
         events.on('slack', 'slash_command', async (event) => {
             const payload = JSON.parse(event.payload || "");
@@ -30,6 +30,6 @@ class SlackEvents {
     }
 }
 
-const slackEvents = new SlackEvents();
+export const slackEvents = new SlackEvents();
 
-module.exports = { slackEvents, SlackEvents };
+// module.exports = { slackEvents, SlackEvents };
