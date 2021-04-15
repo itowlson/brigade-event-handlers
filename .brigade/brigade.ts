@@ -1,11 +1,10 @@
 const { events, logger, Job } = require('@brigadecore/brigadier');
+const { slackEvents } = require('brigade-slack-gateway-events');
+import s = require('@slack/web-api');
 
-const { slackEvents } = require('./brigslack');
-const utils = require('./utils');
+slackEvents.onSlashCommand(async (command, slackClient, event) => {
 
-slackEvents.onSlashCommand(async (command, responseToken, event) => {
-
-    await utils.notifySlack(responseToken, command.channel_id,
+    await notifySlack(slackClient, command.channel_id,
         `Brigade has received your command regarding ${command.text} and will ${command.command.substr(1)} it immediately`
         );
 
@@ -20,7 +19,7 @@ slackEvents.onSlashCommand(async (command, responseToken, event) => {
     await barJob.run();
 });
 
-slackEvents.onShortcut(async (shortcut, responseToken, event) => {
+slackEvents.onShortcut(async (shortcut, slackClient, event) => {
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
@@ -33,9 +32,9 @@ slackEvents.onShortcut(async (shortcut, responseToken, event) => {
     await barJob.run();
 });
 
-slackEvents.onMessageAction(async (shortcut, responseToken, event) => {
+slackEvents.onMessageAction(async (shortcut, slackClient, event) => {
 
-    await utils.notifySlack(responseToken, shortcut.channel.id,
+    await notifySlack(slackClient, shortcut.channel.id,
         `Brigade has received your command regarding ${shortcut.message.text} and is springing into action pronto`
         );
 
@@ -51,3 +50,11 @@ slackEvents.onMessageAction(async (shortcut, responseToken, event) => {
 });
 
 events.process();
+
+async function notifySlack(slackClient: s.WebClient, channelId: string, message: string) {
+    const conversationId = channelId;
+    logger.info('notifying Slack');
+    await slackClient.chat.postMessage({ channel: conversationId, text: message });
+    logger.info('notified Slack');
+}
+
