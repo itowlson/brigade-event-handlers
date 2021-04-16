@@ -1,9 +1,10 @@
 const { events, logger, Job } = require('@brigadecore/brigadier');
 const { slackEvents } = require('brigade-slack-gateway-events');
 // const { WebClient } = require('@slack/web-api');  // causes "value not type" errors
-const slack = require('@slack/bolt');
+import type { WebClient } from '@slack/web-api';
+import type { GlobalShortcut, MessageShortcut, SlashCommand } from '@slack/bolt';
 
-slackEvents.onSlashCommand(async (command, slackClient, event) => {
+slackEvents.onSlashCommand(async (command: SlashCommand, slackClient: WebClient, event) => {
 
     await notifySlack(slackClient, command.channel_id,
         `Brigade has received your command regarding ${command.text} and will ${command.command.substr(1)} it immediately`
@@ -20,7 +21,7 @@ slackEvents.onSlashCommand(async (command, slackClient, event) => {
     await barJob.run();
 });
 
-slackEvents.onShortcut(async (shortcut, slackClient, event) => {
+slackEvents.onShortcut(async (shortcut: GlobalShortcut, slackClient: WebClient, event) => {
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
@@ -33,7 +34,7 @@ slackEvents.onShortcut(async (shortcut, slackClient, event) => {
     await barJob.run();
 });
 
-slackEvents.onMessageAction(async (shortcut, slackClient, event) => {
+slackEvents.onMessageAction(async (shortcut: MessageShortcut, slackClient: WebClient, event) => {
 
     await notifySlack(slackClient, shortcut.channel.id,
         `Brigade has received your command regarding ${shortcut.message.text} and is springing into action pronto`
@@ -52,7 +53,7 @@ slackEvents.onMessageAction(async (shortcut, slackClient, event) => {
 
 events.process();
 
-async function notifySlack(slackClient, channelId: string, message: string) {
+async function notifySlack(slackClient: WebClient, channelId: string, message: string) {
     const conversationId = channelId;
     logger.info('notifying Slack');
     await slackClient.chat.postMessage({ channel: conversationId, text: message });
