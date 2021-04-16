@@ -1,8 +1,10 @@
 const { events, logger, Job } = require('@brigadecore/brigadier');
 const { slackEvents } = require('brigade-slack-gateway-events');
-import s = require('@slack/web-api');
+import brig = require('@brigadecore/brigadier');
+import slackapi = require('@slack/web-api');
+import slack = require('@slack/bolt');
 
-slackEvents.onSlashCommand(async (command, slackClient, event) => {
+slackEvents.onSlashCommand(async (command: slack.SlashCommand, slackClient: slackapi.WebClient, event: brig.Event) => {
 
     await notifySlack(slackClient, command.channel_id,
         `Brigade has received your command regarding ${command.text} and will ${command.command.substr(1)} it immediately`
@@ -19,7 +21,7 @@ slackEvents.onSlashCommand(async (command, slackClient, event) => {
     await barJob.run();
 });
 
-slackEvents.onShortcut(async (shortcut, slackClient, event) => {
+slackEvents.onShortcut(async (shortcut: slack.GlobalShortcut, slackClient: slackapi.WebClient, event: brig.Event) => {
 
     let fooJob = new Job("foo", "debian:latest", event);
     fooJob.primaryContainer.command = ["echo"];
@@ -32,7 +34,7 @@ slackEvents.onShortcut(async (shortcut, slackClient, event) => {
     await barJob.run();
 });
 
-slackEvents.onMessageAction(async (shortcut, slackClient, event) => {
+slackEvents.onMessageAction(async (shortcut: slack.MessageShortcut, slackClient: slackapi.WebClient, event: brig.Event) => {
 
     await notifySlack(slackClient, shortcut.channel.id,
         `Brigade has received your command regarding ${shortcut.message.text} and is springing into action pronto`
@@ -51,7 +53,7 @@ slackEvents.onMessageAction(async (shortcut, slackClient, event) => {
 
 events.process();
 
-async function notifySlack(slackClient: s.WebClient, channelId: string, message: string) {
+async function notifySlack(slackClient: slackapi.WebClient, channelId: string, message: string) {
     const conversationId = channelId;
     logger.info('notifying Slack');
     await slackClient.chat.postMessage({ channel: conversationId, text: message });
